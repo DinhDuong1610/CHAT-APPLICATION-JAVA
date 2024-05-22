@@ -10,6 +10,7 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
 
+import decode.ImageDecoder;
 import model.Model_User;
 import view.design.ImageAvatar;
 
@@ -26,8 +27,8 @@ public class Chat_Left extends JLayeredPane{
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
 		IaImage.setBorderSize(0);
-		IaImage.setImage(new ImageIcon(getClass().getResource("/images/testing/avatar.png")));
-//		IaImage.setImage(ImageDecoder.decodeStringToImageIcon(user.getAvatar_path()));
+//		IaImage.setImage(new ImageIcon(getClass().getResource("/images/testing/avatar.png")));
+		IaImage.setImage(ImageDecoder.decodeStringToImageIcon(user.getAvatar_path()));
 		IaImage.setMaximumSize(new Dimension(31, 31));
         IaImage.setMinimumSize(new Dimension(31, 31));
         IaImage.setPreferredSize(new Dimension(31, 31));

@@ -12,7 +12,9 @@ import java.nio.charset.StandardCharsets;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import model.Model_Group;
 import model.Model_Message;
+import model.Model_Message_Group;
 import model.Model_User;
 import view.Main;
 import view.form.Login;
@@ -115,6 +117,33 @@ public class Service {
                 String history = jsonData.getString("history");
                 main.getHome().getChat().getChatBody().loadHistory(history);
 	    	}
+	    	else if(jsonData.getString("type").equals("addGroup")) {
+	    		Model_Group group = new Model_Group(jsonData);
+	    		main.getHome().getMenu_Left().addGroup(group);
+//                main.getHome().getChat().getChatBody().loadHistory(history);
+	    	}
+	    	else if(jsonData.getString("type").equals("addMember")) {
+	    		Model_User user = new Model_User(jsonData);
+	    		main.getHome().getChat().getMember().addMember(user);
+	    	}
+	    	else if(jsonData.getString("type").equals("listMember")) {
+	    		Model_User user = new Model_User(jsonData);
+	    		main.getHome().getChat().getMember().addMember(user);
+	    	}
+	    	else if(jsonData.getString("type").equals("listGroup")) {	    	
+	    		JSONArray jsonArray = jsonData.getJSONArray("jsonArray");
+	            for (int i = 0; i < jsonArray.length(); i++) {
+	                JSONObject json = jsonArray.getJSONObject(i);
+	                Model_Group group = new Model_Group(json);
+	                main.getHome().getMenu_Left().addGroup(group);
+		    	}
+	    	}
+	    	else if(jsonData.getString("type").equals("sendMessageGroup")) {   				
+    			if(main.getHome().getChat().getGroup().getGroupId() == jsonData.getInt("groupId") && main.getHome().getChat().getGroup().getGroupName().equals(main.getHome().getChat().getChatTitle().getLbName().getText())) {
+    				Model_Message_Group message = new Model_Message_Group(jsonData);
+    				main.getHome().getChat().getChatBody().addItemLeft(message);
+    			}
+	    	}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -168,6 +197,18 @@ public class Service {
         }).start();  
     }
     
+    public void sendMessageGroup(JSONObject jsonData) {
+        new Thread(() -> {
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                writer.write(jsonData.toString() + "\n");
+                writer.flush();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+        }).start();  
+    }
+    
     public void historyMessage(int user_Id2) {
     	JSONObject json = new JSONObject();
 		try {
@@ -187,13 +228,89 @@ public class Service {
         }).start(); 
     }
     
+    public void listGroup() {
+    	JSONObject json = new JSONObject();
+		try {
+			json.put("type", "listGroup");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        new Thread(() -> {
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                writer.write(json.toString() + "\n");
+                writer.flush();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+        }).start(); 
+    }
+    
+    public void addGroup(JSONObject jsonData) {
+        new Thread(() -> {
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                writer.write(jsonData.toString() + "\n");
+                writer.flush();
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+        }).start(); 
+    }
+    
+    public void addMember(String userName, Model_Group group) {
+    	JSONObject json = new JSONObject();
+		try {
+			json.put("type", "addMember");
+			json.put("userName", userName);
+			json.put("groupId", group.getGroupId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        new Thread(() -> {
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                writer.write(json.toString() + "\n");
+                writer.flush();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+        }).start(); 
+    }
+    
+    public void listMember(int groupId) {
+    	JSONObject json = new JSONObject();
+		try {
+			json.put("type", "listMember");
+			json.put("groupId", groupId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        new Thread(() -> {
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                writer.write(json.toString() + "\n");
+                writer.flush();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+        }).start(); 
+    }
     
     
     public void selectedUser(Model_User user) {
     	main.getHome().setUser(user);
     }
     
+    public void selectedGroup(Model_Group group) {
+    	main.getHome().setGroup(group);
+    }
+    
     public void sendBottomChat(Model_Message message) {
+    	main.getHome().getChat().getChatBody().addItemRight(message);
+    }
+    
+    public void sendBottomChat(Model_Message_Group message) {
     	main.getHome().getChat().getChatBody().addItemRight(message);
     }
 

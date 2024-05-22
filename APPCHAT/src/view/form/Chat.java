@@ -3,8 +3,10 @@ package view.form;
 import java.awt.Color;
 
 import javax.swing.GroupLayout;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import model.Model_Group;
 import model.Model_User;
 import net.miginfocom.swing.MigLayout;
 import service.Service;
@@ -16,6 +18,8 @@ public class Chat extends JPanel{
 	private Chat_Body chatBody;
 	private Chat_Bottom chatBottom;
 	private Chat_Title chatTitle;
+	private Model_Group group;
+	private ListGroup member;
 	
 	public Chat() {
 		chatBody = new Chat_Body();
@@ -37,7 +41,7 @@ public class Chat extends JPanel{
 		
         setLayout(new MigLayout("fillx", "0[fill]0", "0[]0[100%, fill]0[shrink 0]0"));
         
-        add(chatTitle, "wrap");
+        add(chatTitle, "wrap, height 50:50:50");
         add(chatBody, "wrap");
         add(chatBottom, "h :: 50%");
 	}
@@ -49,6 +53,25 @@ public class Chat extends JPanel{
         chatBody.clearChat();
         Service.getInstance().historyMessage(user.getUser_Id());
     }
+    
+    public void setGroup(Model_Group group) {
+    	this.group = group;
+        chatTitle.setGroupName(group);
+        chatBottom.setGroup(group);
+        chatBody.setGroup(group);
+        chatBody.clearChat();
+//        Service.getInstance().historyGroup(group);
+    }
+    
+	public void memberGroup() {
+		JDialog dialog = new JDialog();
+		member = new ListGroup(group);
+		Service.getInstance().listMember(group.getGroupId());
+		dialog.setSize(310, 400);
+		dialog.setLocationRelativeTo(null);
+		dialog.add(member);
+		dialog.setVisible(true);
+	}
 
     public void updateUser(Model_User user) {
         chatTitle.updateUser(user);
@@ -65,5 +88,15 @@ public class Chat extends JPanel{
 	public void setChatTitle(Chat_Title chatTitle) {
 		this.chatTitle = chatTitle;
 	}
+
+	public Model_Group getGroup() {
+		return group;
+	}
+
+	public ListGroup getMember() {
+		return member;
+	}
+	
+	
       
 }

@@ -15,8 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import model.Model_Group;
 import model.Model_Login;
 import model.Model_Message;
+import model.Model_Message_Group;
 import model.Model_Register;
 import model.Model_User;
 
@@ -28,6 +30,7 @@ public class Service {
 	private ServiceUser serviceUser;
 	private ArrayList<ClientHandler> clients = new ArrayList<>();
 	private ServiceMessage serviceMessage;
+	private ServiceGroup serviceGroup;
 	private static int id = 1000000;
     
     public static Service getInstance(JTextArea textArea) {
@@ -74,6 +77,7 @@ public class Service {
     
     public void listen(ClientHandler client, String newdata) {
         serviceMessage = new ServiceMessage(client.getUserId());
+        serviceGroup = new ServiceGroup(client.getUserId());
     	String data = new String(newdata);
 		new Thread(()->{
     		try {
@@ -124,8 +128,31 @@ public class Service {
         	            jsonActive.put("type", "active");
         	            jsonActive.put("userId", account.getUser_Id());
         	            broadcastActive(client.getUserId(), jsonActive);
+        	            
+        	            List<Model_Group> list2 = serviceGroup.getGroup(client.getUserId());
+        	            JSONArray jsonArray2 = new JSONArray();
+        	            for(Model_Group pro : list2) {    	    
+        	            	jsonArray2.put(pro.toJsonObject("listGroup"));
+        	            	textArea.append("list listGroup :" +  pro.toJsonObject("listGroup") + "\n");
+        	            }
+        	            JSONObject json3 = new JSONObject();
+        	            json3.put("type", "listGroup");
+        	            json3.put("jsonArray", jsonArray2);
+    	            	broadcast(client.getUserId(), json3);
     	            }    	            
     	    	}
+    			else if(jsonData.getString("type").equals("listGroup")) {
+    	            List<Model_Group> list2 = serviceGroup.getGroup(client.getUserId());
+    	            JSONArray jsonArray2 = new JSONArray();
+    	            for(Model_Group pro : list2) {    	    
+    	            	jsonArray2.put(pro.toJsonObject("listGroup"));
+    	            	textArea.append("list listGroup :" +  pro.toJsonObject("listGroup") + "\n");
+    	            }
+    	            JSONObject json3 = new JSONObject();
+    	            json3.put("type", "listGroup");
+    	            json3.put("jsonArray", jsonArray2);
+	            	broadcast(client.getUserId(), json3);
+    			}
     	    	else if(jsonData.getString("type").equals("registerInfo")) {
     	    		Model_User user = new Model_User(jsonData);
     	    		serviceUser.registerInfo(user);
@@ -142,6 +169,36 @@ public class Service {
 	            	textArea.append("historyMessage :" +  client.getUserId() + " - " + user_Id2 +  "\n");
 	            	String history = serviceMessage.historyMessage(user_Id2);
     	            broadcastHistory(client.getUserId(), history);    	            
+    			}
+    			else if(jsonData.getString("type").equals("addGroup")) {
+    				Model_Group group = new Model_Group(jsonData);
+    				Model_Group newGroup = serviceGroup.addGroup(group);
+    	            broadcast(client.getUserId(), newGroup.toJsonObject("addGroup"));    	            
+    			}
+    			else if(jsonData.getString("type").equals("addMember")) {
+    				String userName = jsonData.getString("userName");
+    				int groupId = jsonData.getInt("groupId");
+    				Model_User user = serviceGroup.addMember(userName, groupId);
+    				broadcastGroup(jsonData.getInt("groupId"), user.toJsonObject("addMember"));
+    			}
+    			else if(jsonData.getString("type").equals("listMember")) {
+	            	textArea.append("list member :" +  jsonData + "\n");
+    	            List<Model_User> list = serviceGroup.getMember(jsonData.getInt("groupId"));
+    	            if(list.size() == 0) textArea.append("rong!!!!");
+    	            for(Model_User user : list) {    	    
+    	            	broadcastGroup(jsonData.getInt("groupId"), user.toJsonObject("listMember"));
+    	            	textArea.append("list member :" +  user.toJsonObject("listMember") + "\n");
+    	            };
+    			}
+       			else if(jsonData.getString("type").equals("sendMessageGroup")) {
+    	            List<Model_User> list = serviceGroup.getMember(jsonData.getInt("groupId"));
+    	            if(list.size() == 0) textArea.append("rong!!!!");
+    	            Model_Message_Group message = new Model_Message_Group(jsonData);
+    	            for(Model_User user : list) {
+    	            	if(user.getUser_Id() != client.getUserId()) {
+        	            	broadcast(user.getUser_Id(), message.toJsonObject("sendMessageGroup"));
+    	            	}
+    	            };
     			}
     	    		
     		} catch (JSONException e) {
@@ -177,6 +234,18 @@ public class Service {
             for (ClientHandler client : clients) {
                 if(client.getUserId() == userId) {
                 	client.sendMessage(json);
+                }
+            }
+    }
+    
+    public void broadcastGroup(int groupId, JSONObject jsonData) {
+    	List<Model_User> list = new ServiceGroup(1).getMember(groupId);
+            for (ClientHandler client : clients) {
+                for(Model_User account : list) {
+                	if(client.getUserId() == account.getUser_Id()) {
+                		client.sendMessage(jsonData);
+                		break;
+                	}
                 }
             }
     }

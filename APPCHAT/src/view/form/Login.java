@@ -21,6 +21,7 @@ import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 public class Login extends JPanel{
 	private JTextField tf_userName;
@@ -35,9 +36,11 @@ public class Login extends JPanel{
 	public Login() {
 		setSize(1472, 803);
 		setLayout(null);
+		setBackground(new Color(254, 197, 205));
 		
 		panel = new JPanel();
 		panel.setBounds(989, 174, 361, 434);
+		panel.setBackground(new Color(254, 197, 205));
 		add(panel);
 		cardLayout = new CardLayout(0, 0);
 		panel.setLayout(cardLayout);
@@ -54,11 +57,13 @@ public class Login extends JPanel{
 		panel_login.add(lblNewLabel);
 		
 		tf_userName = new JTextField();
+		tf_userName.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tf_userName.setBounds(25, 104, 315, 39);
 		panel_login.add(tf_userName);
 		tf_userName.setColumns(10);
 		
 		tf_password = new JPasswordField();
+		tf_password.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tf_password.setBounds(25, 211, 315, 39);
 		panel_login.add(tf_password);
 		
@@ -92,6 +97,7 @@ public class Login extends JPanel{
 		panel_login.add(bt_login);
 		
 		lb_login_message = new JLabel("");
+		lb_login_message.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lb_login_message.setHorizontalAlignment(SwingConstants.CENTER);
 		lb_login_message.setBounds(25, 374, 315, 39);
 		panel_login.add(lb_login_message);
@@ -120,15 +126,18 @@ public class Login extends JPanel{
 		panel_register.add(lblRegister);
 		
 		tf_userName_register = new JTextField();
+		tf_userName_register.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tf_userName_register.setColumns(10);
 		tf_userName_register.setBounds(22, 94, 315, 39);
 		panel_register.add(tf_userName_register);
 		
 		tf_password_register = new JPasswordField();
+		tf_password_register.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tf_password_register.setBounds(22, 168, 315, 39);
 		panel_register.add(tf_password_register);
 		
 		tf_confirm_register = new JPasswordField();
+		tf_confirm_register.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tf_confirm_register.setBounds(22, 240, 315, 39);
 		panel_register.add(tf_confirm_register);
 		
@@ -171,6 +180,7 @@ public class Login extends JPanel{
 		panel_register.add(bt_register);
 		
 		lb_register_message = new JLabel("");
+		lb_register_message.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lb_register_message.setHorizontalAlignment(SwingConstants.CENTER);
 		lb_register_message.setBounds(22, 374, 315, 39);
 		panel_register.add(lb_register_message);
@@ -186,6 +196,11 @@ public class Login extends JPanel{
 		btnLogin.setContentAreaFilled(false);
 		btnLogin.setBounds(20, 345, 317, 19);
 		panel_register.add(btnLogin);
+		
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setIcon(new ImageIcon(Login.class.getResource("/images/background/logo_message.png")));
+		lblNewLabel_2.setBounds(225, 181, 400, 400);
+		add(lblNewLabel_2);
 	}
 	
 	public void checkRegister(boolean check) {

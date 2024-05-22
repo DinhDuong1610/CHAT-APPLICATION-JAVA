@@ -111,7 +111,7 @@ public class Profile extends JPanel{
 		ta_DiaChi.setFont(new Font("Segoe UI", Font.PLAIN, 26));
 		scrollPane.setViewportView(ta_DiaChi);
 		
-		lblNewLabel = new JLabel("REGISTER");
+		lblNewLabel = new JLabel("INFO USER");
 		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setFont(new Font("Segoe UI Black", Font.BOLD, 40));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);

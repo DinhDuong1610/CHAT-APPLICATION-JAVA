@@ -34,7 +34,6 @@ public class ClientHandler extends Thread{
     
     public void sendMessage(JSONObject jsonData) {
             try {
-//    			out.writeBytes(jsonData.toString() + "\n");
                 OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
                 writer.write(jsonData.toString() + "\n");
                 writer.flush();
@@ -52,11 +51,9 @@ public class ClientHandler extends Thread{
 	            	synchronized (in) {
 	            	    message = in.readLine();
 	            	}
-	                if (message != null) { // Client disconnected
-//		                System.out.println("server: " + message);
+	                if (message != null) {
 		                service.listen(this, message);
 		                service.textArea.append("UTF_8 :" + message + "\n");
-//		                broadcast(message);
 	                }
 	            } catch (Exception e) {
 	                e.printStackTrace();

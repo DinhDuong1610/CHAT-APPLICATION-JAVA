@@ -7,9 +7,19 @@ import java.awt.GridLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import model.Model_Group;
 import model.Model_User;
+import service.Service;
+
+import javax.swing.JButton;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ImageIcon;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Chat_Title extends JPanel{
 	private JLayeredPane layer;
@@ -17,6 +27,9 @@ public class Chat_Title extends JPanel{
 	private JLabel lbStatus;
 	
 	private Model_User user;
+	private Model_Group group;
+	private JButton bt_member;
+	private JButton bt_add;
 	
 	public Chat_Title() {
 		layer = new JLayeredPane();
@@ -36,33 +49,74 @@ public class Chat_Title extends JPanel{
 		setStatusText(true);
 		layer.add(lbStatus);
 		
-		GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(layer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(406, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(layer, GroupLayout.PREFERRED_SIZE, 38, Short.MAX_VALUE)
-                .addGap(5, 5, 5))
-        );
+		bt_member = new JButton("Member");
+		bt_member.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Service.getInstance().getMain().getHome().getChat().memberGroup();
+			}
+		});
+		bt_member.setFont(new Font("Tahoma", Font.BOLD, 15));
+		bt_member.setVisible(false);
 		
+		bt_add = new JButton("New group");
+		bt_add.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				newGroup();
+			}
+		});
+		bt_add.setFont(new Font("Tahoma", Font.BOLD, 15));
+		bt_add.setVisible(false);
+		
+		GroupLayout layout = new GroupLayout(this);
+		layout.setHorizontalGroup(
+			layout.createParallelGroup(Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(layer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 490, Short.MAX_VALUE)
+					.addComponent(bt_member, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(bt_add)
+					.addGap(63))
+		);
+		layout.setVerticalGroup(
+			layout.createParallelGroup(Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addGroup(layout.createParallelGroup(Alignment.LEADING)
+						.addComponent(layer, GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+						.addGroup(layout.createSequentialGroup()
+							.addGap(10)
+							.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(bt_add, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+								.addComponent(bt_member, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+							.addGap(10)))
+					.addContainerGap())
+		);
+        this.setLayout(layout);
+		
+	}
+	
+	public void newGroup() {
+		String nameGroup = JOptionPane.showInputDialog(Service.getInstance().getMain().getHome().getMenu_Left(), "INPUT NAME GROUP");
+		Model_Group group = new Model_Group(0, nameGroup);
+		Service.getInstance().addGroup(group.toJsonObject("addGroup"));
 	}
 	
     public void setUserName(Model_User user) {
         this.user = user;
         lbName.setText(user.getFullName());
+        lbStatus.setVisible(true);
         if (user.isStatus()) {
         	setStatusText(true);
         } else {
         	setStatusText(false);
         }
+    }
+    
+    public void setGroupName(Model_Group group) {
+        this.group = group;
+        lbName.setText(group.getGroupName());
+        lbStatus.setVisible(false);
     }
 
     public void updateUser(Model_User user) {
@@ -91,9 +145,17 @@ public class Chat_Title extends JPanel{
 		}
 	}
 	
+		
 	
-	
-    public Model_User getUser() {
+    public JButton getBt_member() {
+		return bt_member;
+	}
+
+	public JButton getBt_add() {
+		return bt_add;
+	}
+
+	public Model_User getUser() {
         return user;
     }
 

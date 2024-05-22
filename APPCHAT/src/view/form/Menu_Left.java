@@ -1,5 +1,6 @@
 package view.form;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -19,30 +20,30 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
+import model.Model_Group;
 import model.Model_User;
 import net.miginfocom.swing.MigLayout;
 import service.Service;
 import view.Main;
 import view.component.Item_People;
+import view.component.Item_group;
 
 public class Menu_Left extends JPanel{
 	private JLayeredPane panel_menu_list;
 	private List<Model_User> userAccount;
+	private List<Model_Group> groupList;
+	private JPanel panel_chat;
+	private CardLayout cardLayout;
+	private JLayeredPane panel_group_chat;
 
 	public Menu_Left() {
+		userAccount = new ArrayList<>();
+		groupList =  new ArrayList<>();
 		setSize(300, 803);
 		setLayout(new MigLayout("fillx, filly", "0[300]0", "0[50]0[100%,fill]0"));
 		JPanel panel_menu = new JPanel();
 		add(panel_menu, "width 300:300:300, height 50:50:50, wrap");
 		panel_menu.setLayout(new MigLayout("fillx, filly", "0[50!]0[125!]0[125!]0", "0[50]0"));
-		
-//		JLabel label = new JLabel("MESSAGE");
-//		label.setForeground(new Color(255, 255, 255));
-//		label.setFont(new Font("Gill Sans Ultra Bold Condensed", Font.BOLD, 26));
-//		label.setBackground(new Color(0, 191, 255));
-//		label.setOpaque(true);
-//		label.setHorizontalAlignment(SwingConstants.CENTER);
-//		add(label, "width 300:300:300, height 50:50:50, wrap");
 		
 		JButton bt_setting = new JButton("");
 		bt_setting.addActionListener(new ActionListener() {
@@ -72,50 +73,28 @@ public class Menu_Left extends JPanel{
 		bt_chatGroup.setIcon(new ImageIcon((new ImageIcon((Main.class.getResource("/images/icon/chatgroup.png"))).getImage())));
 		bt_setting.setIcon(new ImageIcon((new ImageIcon((Main.class.getResource("/images/icon/setting.png"))).getImage())));
 	
+		cardLayout = new CardLayout();
+		panel_chat = new JPanel(cardLayout);
+		add(panel_chat);
+				
 		panel_menu_list = new JLayeredPane();
 		panel_menu_list.setLayout(new MigLayout("fillx", "2[300]2", "3[]3"));
-		
-		userAccount = new ArrayList<>();
-		
-//        PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
-//            @Override
-//            public void newUser(Model_User_Account d) {	
-//                    userAccount.add(d);
-//                    panel_menu_list.add(new Item_People(d), "width 285:285:285, height 50:50:50, wrap");
-//                    panel_menu_list.repaint();
-//                    panel_menu_list.revalidate();
-//            }
-//        });
-		
+
 		JScrollPane jScrollPane = new JScrollPane(panel_menu_list);
 		jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		add(jScrollPane);
+		panel_chat.add(jScrollPane, "panel_menu_list");
 		
-		showPeople();
+		panel_group_chat = new JLayeredPane();
+		panel_group_chat.setLayout(new MigLayout("fillx", "2[300]2", "3[]3"));
+
+		JScrollPane jScrollPane2 = new JScrollPane(panel_group_chat);
+		jScrollPane2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		panel_chat.add(jScrollPane2, "panel_group_chat");
+		
+		cardLayout.show(panel_chat, "panel_menu_list");
 		
 		setBackground(Color.blue);
 		panel_menu_list.removeAll();
-		
-		
-//		// KHỞI TẠO THỬ
-//		newUser(new Model_User(1, "DinhDuong1", "Đính Dương", "123", "123", "123", "123", true));
-//		newUser(new Model_User(2, "DinhDuong2", "Võ Minh Hùng", "123", "123", "123", "123", true));
-//		newUser(new Model_User(3, "DinhDuong3", "Nguyễn Văn Hội", "123", "123", "123", "123", false));
-//		newUser(new Model_User(4, "DinhDuong4", "Trương Diệu Vy", "123", "123", "123", "123", true));
-//		newUser(new Model_User(5, "DinhDuong5", "Phạm Thị Hạnh", "123", "123", "123", "123", true));
-//		newUser(new Model_User(11, "DinhDuong11", "Nhật Hưng", "123", "123", "123", "123", false));
-//		newUser(new Model_User(6, "DinhDuong6", "Trần Công Hoàng", "123", "123", "123", "123", false));
-//		newUser(new Model_User(7, "DinhDuong7", "My Lee", "123", "123", "123", "123", true));
-//		newUser(new Model_User(8, "DinhDuong8", "Thảo Giang", "123", "123", "123", "123", true));
-//		newUser(new Model_User(9, "DinhDuong9", "Phan Văn Đạt", "123", "123", "123", "123", true));
-//		newUser(new Model_User(10, "DinhDuong10", "Hoàng Văn Thắng", "123", "123", "123", "123", false));
-//		newUser(new Model_User(12, "DinhDuong12", "Lê Hữu Anh Tú", "123", "123", "123", "123", false));
-//		newUser(new Model_User(13, "DinhDuong13", "Cao Hoàng Phước Bảo", "123", "123", "123", "123", true));
-//		newUser(new Model_User(14, "DinhDuong14", "Lê Trung Việt", "123", "123", "123", "123", false));
-//		newUser(new Model_User(15, "DinhDuong15", "Hồ Sỹ Bảo Nhân", "123", "123", "123", "123", true));
-//		newUser(new Model_User(16, "DinhDuong16", "Dung Hoàng", "123", "123", "123", "123", false));
-//		newUser(new Model_User(17, "DinhDuong17", "Trần Ngọc Anh Dũng", "123", "123", "123", "123", true));
-//		// KHỞI TẠO THỬ
 	}
 	
 	public void newUser(Model_User d) {	
@@ -123,6 +102,13 @@ public class Menu_Left extends JPanel{
 	  panel_menu_list.add(new Item_People(d), "width 285:285:285, height 50:50:50, wrap");
 	  panel_menu_list.repaint();
 	  panel_menu_list.revalidate();
+	}
+	
+	public void addGroup(Model_Group group) {	
+		  groupList.add(group);
+		  panel_group_chat.add(new Item_group(group), "width 285:285:285, height 50:50:50, wrap");
+		  panel_group_chat.repaint();
+		  panel_group_chat.revalidate();
 	}
 	
 	public void loadActive(int userId, boolean isActive) {
@@ -138,21 +124,24 @@ public class Menu_Left extends JPanel{
 	}
 	
 	public void showPeople() {
-//		panel_menu_list.removeAll();		
-//        for (Model_User_Account d : userAccount) {
-//        	panel_menu_list.add(new Item_People(d), "width 296:296:296, height 50:50:50, wrap");
-//        }
-//		panel_menu_list.repaint();
-//		panel_menu_list.revalidate();
+		cardLayout.show(panel_chat, "panel_menu_list");
+		Service.getInstance().getMain().getHome().getChat().getChatTitle().getBt_add().setVisible(false);
+		Service.getInstance().getMain().getHome().getChat().getChatTitle().getBt_member().setVisible(false);
 	}
 	
 	public void showGroup() {
-//		panel_menu_list.removeAll();
-//		for(int i = 1; i <= 10; i++) {
-//			panel_menu_list.add(new Item_People("Group " + i), "width 296:296:296, height 50:50:50, wrap");
-//		}
-//		panel_menu_list.repaint();
-//		panel_menu_list.revalidate();
+		cardLayout.show(panel_chat, "panel_group_chat");
+		Service.getInstance().getMain().getHome().getChat().setVisible(true);
+		Service.getInstance().getMain().getHome().getChat().getChatTitle().getLbName().setText("");
+		Service.getInstance().getMain().getHome().getChat().getChatTitle().getLbStatus().setText("");
+		Service.getInstance().getMain().getHome().getChat().getChatTitle().getBt_add().setVisible(true);
+		Service.getInstance().getMain().getHome().getChat().getChatTitle().getBt_member().setVisible(true);
+		Service.getInstance().getMain().getHome().getChat().getChatBody().clearChat();
+		
+		panel_group_chat.removeAll();
+		panel_group_chat.repaint();
+		panel_group_chat.revalidate();
+		Service.getInstance().listGroup();
 	}
 	
 	public void showProfile() {

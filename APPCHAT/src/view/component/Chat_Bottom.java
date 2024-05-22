@@ -16,7 +16,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import model.Model_Group;
 import model.Model_Message;
+import model.Model_Message_Group;
 import model.Model_User;
 import net.miginfocom.swing.MigLayout;
 import service.Service;
@@ -25,6 +27,7 @@ import view.design.JIMSendTextPane;
 public class Chat_Bottom extends JPanel{
 
     private Model_User user;
+    private Model_Group group;
     
 	public Chat_Bottom() {
         setBackground(new Color(255, 255, 255));
@@ -73,11 +76,18 @@ public class Chat_Bottom extends JPanel{
                     String formattedTime = dateFormat.format(currentTime);
                 	
 //                    Model_Message message = new Model_Message(Service.getInstance().getUser().getUser_Id(), user.getUser_Id(), text, formattedTime);
-                    Model_Message message = new Model_Message(Service.getInstance().getUser().getUser_Id(),  user.getUser_Id(), text, formattedTime);
-
-                    send(message);
+                    if(!Service.getInstance().getMain().getHome().getChat().getChatTitle().getLbStatus().getText().isEmpty()) {                    	
+                        Model_Message message = new Model_Message(Service.getInstance().getUser().getUser_Id(),  user.getUser_Id(), text, formattedTime);
+                    	send(message);
+                    	Service.getInstance().sendBottomChat(message);
+                    }
+                    else {
+                        Model_Message_Group message = new Model_Message_Group(group.getGroupId(), Service.getInstance().getUser().getFullName(), text);
+                    	sendGroup(message);
+                    	Service.getInstance().sendBottomChat(message);
+                    }
 //                    PublicEvent.getInstance().getEventChat().sendMessage(message);
-                    Service.getInstance().sendBottomChat(message);
+              
                     txt.setText("");
                     txt.grabFocus();
                     refresh();
@@ -94,6 +104,10 @@ public class Chat_Bottom extends JPanel{
 		Service.getInstance().sendMessage(data.toJsonObject("sendMessage"));
     }
 	
+	private void sendGroup(Model_Message_Group data) {
+		Service.getInstance().sendMessageGroup(data.toJsonObject("sendMessageGroup"));
+    }
+	
 	public void refresh() {
 		revalidate();
 	}
@@ -105,5 +119,15 @@ public class Chat_Bottom extends JPanel{
     public void setUser(Model_User user) {
         this.user = user;
     }
+
+	public Model_Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Model_Group group) {
+		this.group = group;
+	}
+    
+    
 
 }

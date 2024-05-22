@@ -2,6 +2,7 @@ package view.form;
 
 import javax.swing.JPanel;
 
+import model.Model_Group;
 import model.Model_User;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,6 +30,11 @@ public class Home extends JPanel{
 	
     public void setUser(Model_User user) {
         chat.setUser(user);
+        chat.setVisible(true);
+    }
+    
+    public void setGroup(Model_Group group) {
+        chat.setGroup(group);
         chat.setVisible(true);
     }
 
