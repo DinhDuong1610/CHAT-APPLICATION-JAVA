@@ -7,15 +7,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import model.Model_File;
 import model.Model_Group;
 import model.Model_Message;
 import model.Model_Message_Group;
@@ -75,7 +80,6 @@ public class Chat_Bottom extends JPanel{
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM");
                     String formattedTime = dateFormat.format(currentTime);
                 	
-//                    Model_Message message = new Model_Message(Service.getInstance().getUser().getUser_Id(), user.getUser_Id(), text, formattedTime);
                     if(!Service.getInstance().getMain().getHome().getChat().getChatTitle().getLbStatus().getText().isEmpty()) {                    	
                         Model_Message message = new Model_Message(Service.getInstance().getUser().getUser_Id(),  user.getUser_Id(), text, formattedTime);
                     	send(message);
@@ -85,9 +89,7 @@ public class Chat_Bottom extends JPanel{
                         Model_Message_Group message = new Model_Message_Group(group.getGroupId(), Service.getInstance().getUser().getFullName(), text);
                     	sendGroup(message);
                     	Service.getInstance().sendBottomChat(message);
-                    }
-//                    PublicEvent.getInstance().getEventChat().sendMessage(message);
-              
+                    }              
                     txt.setText("");
                     txt.grabFocus();
                     refresh();
@@ -97,16 +99,66 @@ public class Chat_Bottom extends JPanel{
             }
         });
         panel.add(cmd);
+        
+        JButton btnChooseFile = new JButton();
+        btnChooseFile.setBorder(null);
+        btnChooseFile.setContentAreaFilled(false);
+        btnChooseFile.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnChooseFile.setIcon(new ImageIcon(getClass().getResource("/images/icon/icon_file.png"))); 
+        btnChooseFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                JFileChooser fileChooser = new JFileChooser();
+                int option = fileChooser.showOpenDialog(Chat_Bottom.this);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try {
+                        byte[] fileContent = readFileToByteArray(selectedFile);
+                        Model_File modelFile = new Model_File(Service.getInstance().getUser().getUser_Id(),  user.getUser_Id(), selectedFile.getName(), fileContent);
+                        
+                        sendFile(modelFile);
+                        Service.getInstance().sendBottomChat(modelFile);
+                        System.out.println(modelFile.toJsonObject("file"));
+                        
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        panel.add(btnChooseFile);
+        
+        
         add(panel);
 	}
+	
+    // Đọc nội dung file thành mảng byte
+    private byte[] readFileToByteArray(File file) throws IOException {
+        FileInputStream fileInputStream = null;
+        byte[] fileContent = new byte[(int) file.length()];
+        try {
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(fileContent);
+        } finally {
+            if (fileInputStream != null) {
+                fileInputStream.close();
+            }
+        }
+        return fileContent;
+    }
 	
 	private void send(Model_Message data) {
 		Service.getInstance().sendMessage(data.toJsonObject("sendMessage"));
     }
 	
+	private void sendFile(Model_File data) {
+		Service.getInstance().sendFile(data.toJsonObject("sendFile"));
+    }
+	
 	private void sendGroup(Model_Message_Group data) {
 		Service.getInstance().sendMessageGroup(data.toJsonObject("sendMessageGroup"));
     }
+
 	
 	public void refresh() {
 		revalidate();
@@ -128,6 +180,4 @@ public class Chat_Bottom extends JPanel{
 		this.group = group;
 	}
     
-    
-
 }

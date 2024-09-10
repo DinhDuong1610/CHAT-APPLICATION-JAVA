@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import model.Model_File;
 import model.Model_Group;
 import model.Model_Message;
 import model.Model_Message_Group;
@@ -108,6 +109,16 @@ public class Chat_Body extends javax.swing.JPanel {
         updateScroll();  
     }
     
+    public void addItemLeft(Model_File data) {
+        Chat_Left_File item = new Chat_Left_File(user);
+//        item.setUserProfile(data.getName());
+        item.setFile(data);
+        body.add(item, "wrap, w 100::80%");
+        repaint();
+        revalidate();
+        updateScroll();  
+    }
+    
     
     public void addItemRight(Model_Message data) {
         Chat_Right item = new Chat_Right();
@@ -123,6 +134,16 @@ public class Chat_Body extends javax.swing.JPanel {
     public void addItemRight(Model_Message_Group data) {
         Chat_Right item = new Chat_Right();
         item.setText(data.getMessage());
+        body.add(item, "wrap, al right, w 100::80%");
+        repaint();
+        revalidate();
+        updateScroll();
+        updateScroll();
+    }
+    
+    public void addItemRight(Model_File data) {
+        Chat_Right_File item = new Chat_Right_File();
+        item.setFile(data);
         body.add(item, "wrap, al right, w 100::80%");
         repaint();
         revalidate();

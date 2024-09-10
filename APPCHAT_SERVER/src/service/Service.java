@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import model.Model_File;
 import model.Model_Group;
 import model.Model_Login;
 import model.Model_Message;
@@ -163,6 +164,13 @@ public class Service {
     	            Model_Message receiveMessage = new Model_Message(jsonData);
     	            broadcast(jsonData.getInt("toUserID"), sendMessage.toJsonObject("receiveMessage"));    	 
     	            textArea.append("sendMessage: " + sendMessage.toJsonObject("receiveMessage"));
+    			}
+    			else if(jsonData.getString("type").equals("sendFile")) {
+    	            Model_File sendFile = new Model_File(jsonData);
+//    	            serviceMessage.sendMessage(sendMessage);
+//    	            Model_Message receiveMessage = new Model_Message(jsonData);
+    	            broadcast(jsonData.getInt("toUserID"), sendFile.toJsonObject("sendFile"));    	 
+    	            textArea.append("sendFile: " + sendFile.toJsonObject("sendFile"));
     			}
     			else if(jsonData.getString("type").equals("historyMessage")) {
     				int user_Id2 = jsonData.getInt("user_Id2");
